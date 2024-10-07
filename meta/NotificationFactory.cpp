@@ -31,7 +31,10 @@ std::shared_ptr<Notification> NotificationFactory::deserialize(
         return std::make_shared<NotificationPortHostTxReady>(serializedNotification);
 
     if (name == SAI_SWITCH_NOTIFICATION_NAME_PORT_STATE_CHANGE)
+    {
+        SWSS_LOG_ERROR("$$$prgeor NotificationFactory::deserialize PortStateChange %s", serializedNotification.c_str());
         return std::make_shared<NotificationPortStateChange>(serializedNotification);
+    }
 
     if (name == SAI_SWITCH_NOTIFICATION_NAME_QUEUE_PFC_DEADLOCK)
         return std::make_shared<NotificationQueuePfcDeadlock>(serializedNotification);

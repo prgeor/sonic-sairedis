@@ -2180,6 +2180,16 @@ std::string sai_serialize_port_oper_status(
     return sai_serialize_enum(status, &sai_metadata_enum_sai_port_oper_status_t);
 }
 
+std::string sai_serialize_port_error_status(
+        _In_ sai_port_error_status_t status)
+{
+    SWSS_LOG_ENTER();
+
+    //TODO: FIXEME Is serialization of enum or number needed?
+    return sai_serialize_number((uint32_t)status, false);
+}
+
+
 std::string sai_serialize_port_host_tx_ready(
         _In_ sai_port_host_tx_ready_status_t host_tx_ready_status)
 {
@@ -2384,6 +2394,42 @@ std::string sai_serialize_port_oper_status_ntf(
 
         item["port_id"] = sai_serialize_object_id(port_oper_status[i].port_id);
         item["port_state"] = sai_serialize_port_oper_status(port_oper_status[i].port_state);
+        // Default is NO Error
+        item["port_error_status"] = sai_serialize_port_error_status(SAI_PORT_ERROR_STATUS_CLEAR);
+
+        j.push_back(item);
+    }
+
+    // we don't need count since it can be deduced
+    return j.dump();
+}
+
+std::string sai_serialize_extended_port_oper_status_ntf(
+        _In_ uint32_t count,
+        _In_ const sai_port_oper_status_notification_t* port_oper_status)
+{
+    SWSS_LOG_ENTER();
+
+    if (port_oper_status == NULL)
+    {
+        SWSS_LOG_THROW("port_oper_status pointer is null");
+    }
+
+    json j = json::array();
+
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        json item;
+
+        item["port_id"] = sai_serialize_object_id(port_oper_status[i].port_id);
+        item["port_state"] = sai_serialize_port_oper_status(port_oper_status[i].port_state);
+        auto value = static_cast<sai_port_error_status_t>(SAI_PORT_ERROR_STATUS_MAC_LOCAL_FAULT |
+                                SAI_PORT_ERROR_STATUS_MAC_REMOTE_FAULT |
+                                SAI_PORT_ERROR_STATUS_HIGH_BER |
+                                SAI_PORT_ERROR_STATUS_HIGH_SER |
+                                SAI_PORT_ERROR_STATUS_NO_RX_REACHABILITY);
+        //item["port_error_status"] = sai_serialize_port_error_status(port_oper_status[i].port_error_status);
+        item["port_error_status"] = sai_serialize_port_error_status(value);
 
         j.push_back(item);
     }
@@ -4152,6 +4198,15 @@ void sai_deserialize_port_oper_status(
     sai_deserialize_enum(s, &sai_metadata_enum_sai_port_oper_status_t, (int32_t&)status);
 }
 
+void sai_deserialize_port_error_status(
+        _In_ const std::string& s,
+        _Out_ sai_port_error_status_t& status)
+{
+    SWSS_LOG_ENTER();
+
+    sai_deserialize_number(s, status, false);
+}
+
 void sai_deserialize_port_host_tx_ready_status(
         _In_ const std::string& s,
         _Out_ sai_port_host_tx_ready_status_t& status)
@@ -4986,10 +5041,23 @@ void sai_deserialize_port_oper_status_ntf(
 
     auto data = new sai_port_oper_status_notification_t[count];
 
+    SWSS_LOG_ERROR("$$$prgeor count: %u data:%s", count, s.c_str());
+
     for (uint32_t i = 0; i < count; ++i)
     {
         sai_deserialize_object_id(j[i]["port_id"], data[i].port_id);
         sai_deserialize_port_oper_status(j[i]["port_state"], data[i].port_state);
+
+
+        // Check if the port_error_status is present in the notification
+        if (j[i].contains("port_error_status"))
+        {
+            sai_deserialize_port_error_status(j[i]["port_error_status"], data[i].port_error_status);
+        }
+        else
+        {
+            data[i].port_error_status = SAI_PORT_ERROR_STATUS_CLEAR;
+        }
     }
 
     *port_oper_status = data;

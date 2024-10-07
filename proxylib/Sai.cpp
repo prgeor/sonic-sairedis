@@ -1152,7 +1152,8 @@ void Sai::handleNotification(
 
     if (notification)
     {
-        SWSS_LOG_INFO("got notification: %s, executing callback!", serializedNotification.c_str());
+        if (name == SAI_SWITCH_NOTIFICATION_NAME_PORT_STATE_CHANGE)
+            SWSS_LOG_ERROR("$$$ prgeor got notification: %s, executing callback!", serializedNotification.c_str());
 
         // execute callback from notification thread
 

@@ -1115,6 +1115,8 @@ void Proxy::onPortStateChange(
 
     auto s = sai_serialize_port_oper_status_ntf(count, data);
 
+    SWSS_LOG_ERROR("$$$prgeor sending notification: %s", s.c_str());
+
     sendNotification(SAI_SWITCH_NOTIFICATION_NAME_PORT_STATE_CHANGE, s);
 }
 

@@ -148,6 +148,10 @@ namespace syncd
                     _In_ const swss::KeyOpFieldsValuesTuple& item);
 
         public:
+            sai_api_version_t getApiVersion(void) const;
+        
+            void setApiVersion(
+                    _In_ sai_api_version_t saiversion);
 
             void syncProcessNotification(
                     _In_ const swss::KeyOpFieldsValuesTuple& item);
@@ -174,6 +178,7 @@ namespace syncd
             std::function<void(const swss::KeyOpFieldsValuesTuple&)> m_synchronizer;
 
             std::shared_ptr<RedisClient> m_client;
+            sai_api_version_t m_saiVersion;
 
             std::shared_ptr<NotificationProducerBase> m_notifications;
     };

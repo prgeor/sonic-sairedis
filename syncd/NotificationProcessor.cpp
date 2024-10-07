@@ -491,7 +491,7 @@ void NotificationProcessor::process_on_port_state_change(
 {
     SWSS_LOG_ENTER();
 
-    SWSS_LOG_DEBUG("port notification count: %u", count);
+    SWSS_LOG_ERROR("$$$prgeor port notification count: %u", count);
 
     for (uint32_t i = 0; i < count; i++)
     {
@@ -507,7 +507,7 @@ void NotificationProcessor::process_on_port_state_change(
          * switch vid.
          */
 
-        SWSS_LOG_INFO("Port RID %s state change notification",
+        SWSS_LOG_ERROR("$$$prgeor Port RID %s state change notification",
                 sai_serialize_object_id(rid).c_str());
 
         if (false == m_translator->tryTranslateRidToVid(rid, oper_stat->port_id))
@@ -520,12 +520,21 @@ void NotificationProcessor::process_on_port_state_change(
          * SAI_NULL_OBJECT_ID or non exist at time of processing
          */
 
-        SWSS_LOG_INFO("Port VID %s state change notification",
+        SWSS_LOG_ERROR("$$$prgeor Port VID %s state change notification",
                 sai_serialize_object_id(oper_stat->port_id).c_str());
     }
 
-    std::string s = sai_serialize_port_oper_status_ntf(count, data);
+    std::string s;
+    if (getApiVersion() >= SAI_VERSION(1, 14, 0)) //TODO: Remove ==
+    {
+        s = sai_serialize_extended_port_oper_status_ntf(count, data);
+    }
+    else
+    {
+        s = sai_serialize_port_oper_status_ntf(count, data);
+    }
 
+    SWSS_LOG_ERROR("$$$prgeor Port state change notification %s", s.c_str());
     sendNotification(SAI_SWITCH_NOTIFICATION_NAME_PORT_STATE_CHANGE, s);
 }
 
@@ -685,6 +694,8 @@ void NotificationProcessor::handle_port_state_change(
         _In_ const std::string &data)
 {
     SWSS_LOG_ENTER();
+
+    SWSS_LOG_ERROR("$$$prgeor NotificationProcessor Port state change notification %s", data.c_str());
 
     uint32_t count;
     sai_port_oper_status_notification_t *portoperstatus = NULL;
@@ -906,4 +917,21 @@ std::shared_ptr<NotificationQueue> NotificationProcessor::getQueue() const
     SWSS_LOG_ENTER();
 
     return m_notificationQueue;
+}
+
+sai_api_version_t NotificationProcessor::getApiVersion(void) const
+{
+    SWSS_LOG_ENTER();
+
+    return this->m_saiVersion;
+}
+
+void NotificationProcessor::setApiVersion(
+        _In_ sai_api_version_t version)
+{
+    SWSS_LOG_ENTER();
+
+    SWSS_LOG_ERROR("$$$prgeor setting api version to 0x%" PRIx64, version);
+
+    this->m_saiVersion = version;
 }

@@ -196,7 +196,7 @@ Syncd::Syncd(
 
     m_test_services = m_smt.getServiceMethodTable();
 
-    sai_status_t status = vendorSai->apiInitialize(0, &m_test_services);
+    auto status = vendorSai->apiInitialize(0, &m_test_services);
 
     if (status != SAI_STATUS_SUCCESS)
     {
@@ -208,7 +208,19 @@ Syncd::Syncd(
 
     m_breakConfig = BreakConfigParser::parseBreakConfig(m_commandLineOptions->m_breakConfig);
 
-    SWSS_LOG_NOTICE("syncd started");
+    sai_api_version_t apiVersion = 0;
+    status = vendorSai->queryApiVersion(&apiVersion);
+    if (status != SAI_STATUS_SUCCESS)
+    {
+        SWSS_LOG_ERROR("FATAL: failed to get vendor SAI API version: %s",
+                sai_serialize_status(status).c_str());
+    }
+
+    SWSS_LOG_ERROR("$$$prgeor vendor SAI API version: 0x%" PRIx64, apiVersion);
+    m_handler->setApiVersion(apiVersion);
+    m_processor->setApiVersion(apiVersion);
+
+    SWSS_LOG_ERROR("$$$prgeor syncd started");
 }
 
 Syncd::~Syncd()

@@ -25,6 +25,10 @@ namespace syncd
             virtual ~NotificationHandler();
 
         public:
+            sai_api_version_t getApiVersion(void) const;
+        
+            void setApiVersion(
+                    _In_ sai_api_version_t saiversion);
 
             void setSwitchNotifications(
                     _In_ const sai_switch_notifications_t& switchNotifications);
@@ -93,6 +97,8 @@ namespace syncd
                     _In_ const std::string& data);
 
         private:
+
+            sai_api_version_t m_saiVersion;
 
             sai_switch_notifications_t m_switchNotifications;
 

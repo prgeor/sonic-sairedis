@@ -252,6 +252,9 @@ std::string sai_serialize_mac(
 std::string sai_serialize_port_oper_status(
         _In_ sai_port_oper_status_t status);
 
+std::string sai_serialize_port_error_status(
+        _In_ sai_port_error_status_t status);
+
 std::string sai_serialize_port_host_tx_ready(
         _In_ sai_port_host_tx_ready_status_t host_tx_ready_status);
 
@@ -290,6 +293,10 @@ std::string sai_serialize_nat_event_ntf(
         _In_ const sai_nat_event_notification_data_t* nat_event);
 
 std::string sai_serialize_port_oper_status_ntf(
+        _In_ uint32_t count,
+        _In_ const sai_port_oper_status_notification_t* port_oper_status);
+
+std::string sai_serialize_extended_port_oper_status_ntf(
         _In_ uint32_t count,
         _In_ const sai_port_oper_status_notification_t* port_oper_status);
 

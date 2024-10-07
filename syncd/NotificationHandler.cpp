@@ -93,7 +93,20 @@ void NotificationHandler::onPortStateChange(
 {
     SWSS_LOG_ENTER();
 
-    auto s = sai_serialize_port_oper_status_ntf(count, data);
+    std::string s;
+
+    SWSS_LOG_ERROR("$$$prgeor NotificationHandler count %d API version:0x%" PRIx64, count, getApiVersion());
+
+    if (getApiVersion() >= SAI_VERSION(1, 14, 0)) //TODO: Remove ==
+    {
+        s = sai_serialize_extended_port_oper_status_ntf(count, data);
+        SWSS_LOG_ERROR("$$$prgeor NotificationHandler Enqueing Extended port change notificaiton %s", s.c_str());
+    }
+    else
+    {
+        s = sai_serialize_port_oper_status_ntf(count, data);
+        SWSS_LOG_ERROR("$$$prgeor NotificationHandler Enqueing port change notificaiton %s", s.c_str());
+    }
 
     enqueueNotification(SAI_SWITCH_NOTIFICATION_NAME_PORT_STATE_CHANGE, s);
 }
@@ -207,3 +220,19 @@ void NotificationHandler::enqueueNotification(
     enqueueNotification(op, data, entry);
 }
 
+sai_api_version_t NotificationHandler::getApiVersion(void) const
+{
+    SWSS_LOG_ENTER();
+
+    return this->m_saiVersion;
+}
+
+void NotificationHandler::setApiVersion(
+        _In_ sai_api_version_t version)
+{
+    SWSS_LOG_ENTER();
+
+    SWSS_LOG_ERROR("$$$prgeor setting api version to 0x%" PRIx64, version);
+
+    this->m_saiVersion = version;
+}

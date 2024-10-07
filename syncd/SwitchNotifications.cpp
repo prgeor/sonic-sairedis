@@ -65,6 +65,8 @@ void SwitchNotifications::SlotBase::onPortStateChange(
 {
     SWSS_LOG_ENTER();
 
+    SWSS_LOG_ERROR("$$$prgeor SwitchNotification Slot%d portid 0x%", context, data->port_id);
+
     return m_slots.at(context)->m_handler->onPortStateChange(count, data);
 }
 
