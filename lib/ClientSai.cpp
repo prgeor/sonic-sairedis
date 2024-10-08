@@ -1452,6 +1452,8 @@ void ClientSai::handleNotification(
     //
     // But before that we will extract switch id from notification itself.
 
+    SWSS_LOG_ERROR("$$$prgeor ClientSai::handleNotification: name: %s notification: %s", name.c_str(), serializedNotification.c_str());
+
     auto notification = NotificationFactory::deserialize(name, serializedNotification);
 
     if (notification)

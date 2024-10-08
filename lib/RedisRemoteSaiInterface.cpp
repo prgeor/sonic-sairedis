@@ -1850,6 +1850,7 @@ void RedisRemoteSaiInterface::handleNotification(
 
     // TODO record should also be under api mutex, all other apis are
 
+    SWSS_LOG_ERROR("$$$prgeor RedisRemoteSaiInterface::handleNotification name: %s notification", name.c_str(), serializedNotification.c_str());
     m_recorder->recordNotification(name, serializedNotification, values);
 
     auto notification = NotificationFactory::deserialize(name, serializedNotification);

@@ -491,7 +491,7 @@ void NotificationProcessor::process_on_port_state_change(
 {
     SWSS_LOG_ENTER();
 
-    SWSS_LOG_ERROR("$$$prgeor port notification count: %u", count);
+    SWSS_LOG_ERROR("$$$prgeor NotificationProcessor port notification count: %u", count);
 
     for (uint32_t i = 0; i < count; i++)
     {
@@ -507,7 +507,7 @@ void NotificationProcessor::process_on_port_state_change(
          * switch vid.
          */
 
-        SWSS_LOG_ERROR("$$$prgeor Port RID %s state change notification",
+        SWSS_LOG_ERROR("$$$prgeor NotificationProcessor Port RID %s state change notification",
                 sai_serialize_object_id(rid).c_str());
 
         if (false == m_translator->tryTranslateRidToVid(rid, oper_stat->port_id))
@@ -520,12 +520,12 @@ void NotificationProcessor::process_on_port_state_change(
          * SAI_NULL_OBJECT_ID or non exist at time of processing
          */
 
-        SWSS_LOG_ERROR("$$$prgeor Port VID %s state change notification",
+        SWSS_LOG_ERROR("$$$prgeor NotificationProcessor Port VID %s state change notification",
                 sai_serialize_object_id(oper_stat->port_id).c_str());
     }
 
     std::string s;
-    if (getApiVersion() >= SAI_VERSION(1, 14, 0)) //TODO: Remove ==
+    if (getApiVersion() > SAI_VERSION(1, 15, 0)) //TODO: Remove ==
     {
         s = sai_serialize_extended_port_oper_status_ntf(count, data);
     }
@@ -534,7 +534,7 @@ void NotificationProcessor::process_on_port_state_change(
         s = sai_serialize_port_oper_status_ntf(count, data);
     }
 
-    SWSS_LOG_ERROR("$$$prgeor Port state change notification %s", s.c_str());
+    SWSS_LOG_ERROR("$$$prgeor NotificationProcessor Port state change notification %s", s.c_str());
     sendNotification(SAI_SWITCH_NOTIFICATION_NAME_PORT_STATE_CHANGE, s);
 }
 
@@ -931,7 +931,7 @@ void NotificationProcessor::setApiVersion(
 {
     SWSS_LOG_ENTER();
 
-    SWSS_LOG_ERROR("$$$prgeor setting api version to 0x%" PRIx64, version);
+    SWSS_LOG_ERROR("$$$prgeor NotificationProcessor::setting api version to 0x%" PRIx64, version);
 
     this->m_saiVersion = version;
 }

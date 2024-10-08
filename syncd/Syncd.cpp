@@ -220,7 +220,7 @@ Syncd::Syncd(
     m_handler->setApiVersion(apiVersion);
     m_processor->setApiVersion(apiVersion);
 
-    SWSS_LOG_ERROR("$$$prgeor syncd started");
+    SWSS_LOG_ERROR("***prgeor syncd started: 0x%" PRIx64, SAI_VERSION(1, 14, 0));
 }
 
 Syncd::~Syncd()

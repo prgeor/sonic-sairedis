@@ -2391,11 +2391,12 @@ std::string sai_serialize_port_oper_status_ntf(
     for (uint32_t i = 0; i < count; ++i)
     {
         json item;
+        SWSS_LOG_ERROR("$$$prgeor count=%u port 0x%" PRIx64, count, port_oper_status[i].port_id);
 
         item["port_id"] = sai_serialize_object_id(port_oper_status[i].port_id);
         item["port_state"] = sai_serialize_port_oper_status(port_oper_status[i].port_state);
         // Default is NO Error
-        item["port_error_status"] = sai_serialize_port_error_status(SAI_PORT_ERROR_STATUS_CLEAR);
+        item["port_error_status"] = std::to_string(SAI_PORT_ERROR_STATUS_CLEAR);
 
         j.push_back(item);
     }
@@ -2420,6 +2421,7 @@ std::string sai_serialize_extended_port_oper_status_ntf(
     for (uint32_t i = 0; i < count; ++i)
     {
         json item;
+        SWSS_LOG_ERROR("$$$prgeor count=%u port 0x%" PRIx64, count, port_oper_status[i].port_id);
 
         item["port_id"] = sai_serialize_object_id(port_oper_status[i].port_id);
         item["port_state"] = sai_serialize_port_oper_status(port_oper_status[i].port_state);
@@ -5052,7 +5054,8 @@ void sai_deserialize_port_oper_status_ntf(
         // Check if the port_error_status is present in the notification
         if (j[i].contains("port_error_status"))
         {
-            sai_deserialize_port_error_status(j[i]["port_error_status"], data[i].port_error_status);
+            //sai_deserialize_port_error_status(j[i]["port_error_status"], data[i].port_error_status);
+            data[i].port_error_status = SAI_PORT_ERROR_STATUS_CLEAR;
         }
         else
         {
